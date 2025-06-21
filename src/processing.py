@@ -7,6 +7,6 @@ def filter_by_state(data: list[dict], state: str = "EXECUTED") -> list[dict]:
     return filtered_data
 
 
-def sort_by_date(data: list[dict], is_reverse: bool = False) -> list[dict]:
-    """Сортирует список словарей по дате (по умолчанию — по возрастанию)."""
+def sort_by_date(data: list[dict], is_reverse: bool = True) -> list[dict]:
+    """Сортирует список словарей по дате (по умолчанию — по убыванию)."""
     return sorted(data, key=lambda d: d["date"], reverse=is_reverse)
