@@ -28,3 +28,41 @@ def invalid_date_data() -> List[Dict[str, Any]]:
         {"id": 2, "state": "EXECUTED", "date": "invalid-date"},
         {"id": 3, "state": "EXECUTED", "date": None},
     ]
+
+
+@pytest.fixture
+def sample_transactions():
+    return [
+        {
+            "id": 1,
+            "operationAmount": {"amount": "100.00", "currency": {"name": "USD", "code": "USD"}},
+            "description": "Перевод организации",
+        },
+        {
+            "id": 2,
+            "operationAmount": {"amount": "200.00", "currency": {"name": "Euro", "code": "EUR"}},
+            "description": "Перевод со счета на счет",
+        },
+        {
+            "id": 3,
+            "operationAmount": {"amount": "300.00", "currency": {"name": "USD", "code": "USD"}},
+            "description": "Перевод с карты на карту",
+        },
+        {
+            "id": 4,
+            "operationAmount": {"amount": "400.00", "currency": {"name": "British Pound", "code": "GBP"}},
+            "description": "",
+        },
+    ]
+
+
+@pytest.fixture
+def empty_transactions():
+    """Фикстура с пустым списком транзакций"""
+    return []
+
+
+@pytest.fixture
+def empty_description():
+    """Фикстура транзакции с пустым полем description"""
+    return [{"id": 1, "operationAmount": {"amount": "100.00", "currency": {"name": "USD", "code": "USD"}}}]
