@@ -26,7 +26,7 @@ def retrieve_transactions_by_path(path):
         logger.error(f"Ошибка формата JSON в файле: {path}")
         return []
     except Exception as e:
-        logger.exception(f"Неизвестная ошибка при чтении файла")
+        logger.exception(f"Неизвестная ошибка при чтении файла: {e}")
         return []
 
 
