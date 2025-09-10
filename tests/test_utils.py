@@ -5,10 +5,11 @@ from unittest.mock import patch
 from src.utils import retrieve_transaction_amount
 from src.utils import retrieve_transactions_by_path
 
-
-def test_retrieve_transactions_by_path_success():
+@patch('src.utils.parse_transaction')
+def test_retrieve_transactions_by_path_success(mock_parse):
     """Позитивный тест: файл содержит корректный список словарей"""
     mock_data = '[{"id": 1}, {"id": 2}]'
+    mock_parse.side_effect = lambda x, _: x
 
     with patch("builtins.open", mock_open(read_data=mock_data)):
         result = retrieve_transactions_by_path("fake_path.json")

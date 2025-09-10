@@ -5,14 +5,36 @@ from datetime import datetime
 import pandas as pd
 
 
-def parse_transaction(row):
+def parse_transaction(row, source_format="default"):
     """Преобразует строки в соответствующие типы данных."""
     try:
-        row["amount"] = float(row["amount"])  # или int, если amount всегда целое число
-        row["date"] = datetime.strptime(row["date"], "%Y-%m-%dT%H:%M:%SZ")
-    except (ValueError, KeyError) as e:
-        raise ValueError(f"Ошибка парсинга транзакции: {e}. Данные: {row}") from e
-    return row
+        if source_format == "json":
+            # Только для JSON - особый формат
+            return {
+                'id': row.get('id'),
+                "date": datetime.fromisoformat(row["date"].replace("Z", "+00:00")),
+                "amount": float(row["operationAmount"]["amount"]),
+                "description": row["description"],
+                "currency": row["operationAmount"]["currency"]["code"],
+                "status": row.get("state", "UNKNOWN"),
+                "from": row.get("from", ""),
+                "to": row.get("to", ""),
+            }
+        else:
+            # Для CSV и Excel - одинаковый простой формат
+            return {
+                'id': row.get('id'),
+                "date": datetime.strptime(str(row["date"]), "%Y-%m-%dT%H:%M:%SZ"),
+                "amount": float(row["amount"]),
+                "description": row.get("description", ""),
+                "currency": row.get("currency_code", "RUB"),
+                "status": row.get("state", "UNKNOWN"),
+                "from": row.get("from", ""),
+                "to": row.get("to", ""),
+            }
+
+    except (ValueError, KeyError):
+        return None
 
 
 def read_csv_transactions(file_path):
@@ -30,7 +52,9 @@ def read_csv_transactions(file_path):
             if not reader.fieldnames:
                 raise ValueError("CSV-файл пуст")
             for row in reader:
-                transactions.append(parse_transaction(row))
+                parsed = parse_transaction(row)
+                if parsed is not None:
+                    transactions.append(parsed)
     except csv.Error as e:
         raise ValueError(f"Ошибка чтения CSV: {e}")
 
@@ -54,7 +78,19 @@ def read_excel_transactions(file_path):
     if excel_data.empty:
         raise ValueError("Excel-файл пуст")
 
-    transactions = excel_data.to_dict(orient="records")
-    if not transactions:
+    # Получаем сырые данные
+    raw_transactions = excel_data.to_dict(orient="records")
+    if not raw_transactions:
         raise ValueError("Нет данных для обработки")
-    return transactions
+
+    # Парсим каждую транзакцию
+    parsed_transactions = []
+    for raw_row in raw_transactions:
+        parsed = parse_transaction(raw_row)
+        if parsed is not None:
+            parsed_transactions.append(parsed)
+
+    if not parsed_transactions:
+        raise ValueError("Excel-файл не содержит валидных транзакций")
+
+    return parsed_transactions

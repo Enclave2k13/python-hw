@@ -8,11 +8,10 @@ from src.generators import transaction_descriptions
 def test_filter_by_currency_success(sample_transactions):
     """Тест корректной фильтрации транзакций по валюте."""
     filtered = filter_by_currency(sample_transactions, "USD")
-    result = list(filtered)
 
-    assert len(result) == 2
-    assert result[0]["id"] == 1
-    assert result[1]["id"] == 3
+    assert len(filtered) == 2
+    assert filtered[0]["id"] == 1
+    assert filtered[1]["id"] == 3
 
 
 def test_filter_by_currency_no_matches(sample_transactions):
