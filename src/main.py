@@ -2,6 +2,7 @@ import os
 import sys
 from pathlib import Path
 
+from decorators import log
 from src.generators import filter_by_currency
 from src.processing import filter_by_state
 from src.processing import sort_by_date
@@ -14,6 +15,7 @@ from src.widget import mask_account_card
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
+@log()
 def main():
     greeting = "Привет! Добро пожаловать в программу работы с банковскими транзакциями."
     print(greeting)
@@ -54,10 +56,10 @@ def main():
         print("\nНе найдено ни одной транзакции, подходящей под ваши условия фильтрации")
     else:
         print("\nРаспечатываю итоговый список транзакций...\n")
-        # print(f"Всего банковских операций в выборке: {len(filtered_transactions)}\n")
         print_transactions(filtered_transactions)
 
 
+@log(filename="mylog.txt")
 def get_file_type() -> str:
     """Обрабатывает ответ пользователя и возвращает тип файла"""
     menu = """\nВыберите необходимый пункт меню:
@@ -85,6 +87,7 @@ def get_file_type() -> str:
     return file_type
 
 
+@log()
 def get_transaction_status() -> str:
     """Получает и возвращает статус транзакции"""
     question = """\nВведите статус, по которому необходимо выполнить фильтрацию.
@@ -100,6 +103,7 @@ def get_transaction_status() -> str:
         print(f'Статус операции "{user_choice}" недоступен.\n')
 
 
+@log(filename="mylog.txt")
 def confirm_action(question: str) -> bool:
     """Запрашивает у пользователя ответ Да/Нет и возвращает булево значение"""
     while True:
@@ -113,6 +117,7 @@ def confirm_action(question: str) -> bool:
             print('Пожалуйста, ответьте "Да" или "Нет"\n')
 
 
+@log()
 def get_sort_direction() -> str:
     """Возвращает направление сортировки: 'asc' или 'desc'"""
     while True:
@@ -124,6 +129,7 @@ def get_sort_direction() -> str:
         print('Пожалуйста, укажите "по возрастанию" или "по убыванию"\n')
 
 
+@log(filename="mylog.txt")
 def print_transactions(transactions: list[dict]):
     """Выводит список транзакций"""
     if not transactions:
