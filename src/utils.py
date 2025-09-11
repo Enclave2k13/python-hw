@@ -1,8 +1,10 @@
 import json
+import re
+from collections import Counter
 
 from log_config import setup_logger
-
-from .external_api import convert_amount
+from src.external_api import convert_amount
+from transactions import parse_transaction
 
 logger = setup_logger("utils", "utils.log")
 
@@ -16,9 +18,13 @@ def retrieve_transactions_by_path(path):
 
         with open(path, encoding="utf-8") as f:
             data = json.load(f)
-            result = data if isinstance(data, list) else []
-            logger.info(f"Успешно прочитано {len(result)} транзакций")
-            return result
+            transactions = []
+            for item in data:
+                parsed = parse_transaction(item, "json")
+                if parsed is not None:
+                    transactions.append(parsed)
+            logger.info(f"Успешно прочитано {len(transactions)} транзакций")
+            return transactions
     except FileNotFoundError:
         logger.error(f"Файл не найден: {path}")
         return []
@@ -55,3 +61,31 @@ def retrieve_transaction_amount(transaction):
     except Exception as e:
         logger.error(f"Ошибка обработки транзакции: {str(e)}")
         return 0.0
+
+
+def process_bank_search(data: list[dict], search: str) -> list[dict]:
+    """Фильтрует транзакции по вхождению строки в описание"""
+    if not search:
+        return data
+    pattern = re.compile(re.escape(search), re.IGNORECASE)
+    matched_transactions = []
+    for transaction in data:
+        if "description" in transaction:
+            description = transaction["description"]
+            if pattern.search(description):
+                matched_transactions.append(transaction)
+    return matched_transactions
+
+
+def process_bank_operations(data: list[dict], categories: list) -> dict:
+    """Подсчитывает количество операций по заданным категориям."""
+    categories_lower = [cat.lower() for cat in categories]
+    descriptions = [transaction.get("description", "").lower() for transaction in data]
+
+    description_counts = Counter(descriptions)
+
+    result = {}
+    for category, category_lower in zip(categories, categories_lower):
+        result[category] = description_counts.get(category_lower, 0)
+
+    return result

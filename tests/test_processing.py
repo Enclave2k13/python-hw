@@ -31,7 +31,7 @@ def test_filter_empty_data(empty_data: List[dict]) -> None:
 def test_filter_default_state(sample_data: List[Dict[str, Any]]) -> None:
     """Тестируем фильтрацию со значением state по умолчанию"""
     result = filter_by_state(sample_data)
-    assert all(item["state"] == "EXECUTED" for item in result)
+    assert all(item["status"] == "EXECUTED" for item in result)
 
 
 @pytest.mark.parametrize(

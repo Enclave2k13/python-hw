@@ -7,7 +7,7 @@ from .masks import get_mask_card_number
 def mask_account_card(pay_info: str) -> str:
     """Обрабатывает информацию о картах и счетах и возвращает строку с замаскированным номером"""
     if not isinstance(pay_info, str) or not pay_info.strip():
-        raise ValueError("Некорректный формат данных: ожидается непустая строка.")
+        return "Некорректный формат данных"
 
     parts = pay_info.split()
     if len(parts) < 2:

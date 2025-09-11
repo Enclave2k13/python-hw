@@ -1,6 +1,6 @@
 def filter_by_currency(transactions, currency):
     """Возвращает итератор транзакций с заданной валютой."""
-    return filter(lambda x: x["operationAmount"]["currency"]["code"] == currency, transactions)
+    return list(filter(lambda x: x["currency"] == currency, transactions))
 
 
 def transaction_descriptions(transactions):
