@@ -11,7 +11,7 @@ def parse_transaction(row, source_format="default"):
         if source_format == "json":
             # Только для JSON - особый формат
             return {
-                'id': row.get('id'),
+                "id": row.get("id"),
                 "date": datetime.fromisoformat(row["date"].replace("Z", "+00:00")),
                 "amount": float(row["operationAmount"]["amount"]),
                 "description": row["description"],
@@ -23,7 +23,7 @@ def parse_transaction(row, source_format="default"):
         else:
             # Для CSV и Excel - одинаковый простой формат
             return {
-                'id': row.get('id'),
+                "id": row.get("id"),
                 "date": datetime.strptime(str(row["date"]), "%Y-%m-%dT%H:%M:%SZ"),
                 "amount": float(row["amount"]),
                 "description": row.get("description", ""),

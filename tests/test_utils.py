@@ -5,7 +5,8 @@ from unittest.mock import patch
 from src.utils import retrieve_transaction_amount
 from src.utils import retrieve_transactions_by_path
 
-@patch('src.utils.parse_transaction')
+
+@patch("src.utils.parse_transaction")
 def test_retrieve_transactions_by_path_success(mock_parse):
     """Позитивный тест: файл содержит корректный список словарей"""
     mock_data = '[{"id": 1}, {"id": 2}]'

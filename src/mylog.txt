@@ -1,0 +1,5 @@
+get_file_type ok
+confirm_action ok
+confirm_action ok
+confirm_action ok
+print_transactions ok
